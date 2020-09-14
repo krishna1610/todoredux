@@ -28,54 +28,56 @@ const myReducer = (
   action
 ) => {
   switch (action.type) {
-    case "ADD_ITEM": // action = { type, newItem }, newItem = { text, check }
-      let newItem = action.newItem; // object-->{text,check}
-      let allItems = state.items; //array of object ,object-->{text,check}
-      allItems.push(newItem);
-      console.log(allItems);
+    case "ADD_ITEM": // action = { type, newText }, newText = string
       return {
         ...state,
-        items: allItems,
+        items: [
+          ...state.items,
+          {
+            id: state.items.length,
+            text: action.newText,
+            check: false
+          }
+        ]
       };
-      break;
-    case "CHECK_UNCHECK_ITEM": // action = { type, item }, item = { text, check }
-      let checkAllItems = state.items; // local copy of items array in state
-      let item = action.item; //object
-      let index = checkAllItems.indexOf(item); //number
-      checkAllItems[index].check = !checkAllItems[index].check; // Toggle check value
+    case "CHECK_UNCHECK_ITEM": // action = { type, id }, id = 0, 1, 2, 3, etc.
       return {
         ...state,
-        items: checkAllItems,
+        items: state.items.map((item) => {
+          if (item.id === action.id) { // Toggle check
+            return {
+              ...item,
+              check: !item.check
+            };
+          } else {
+            return item;
+          }
+        }),
       };
-      break;
-    case "DELETE_ITEM": // action = { type, item }, item = { text, check }
-      let deleteAllItems = state.items;
-      let selectedItem = action.item;
-      let delIndex = deleteAllItems.indexOf(selectedItem);
-      deleteAllItems.splice(delIndex, 1);
+    case "DELETE_ITEM": // action = { type, id }, id = 0, 1, 2, 3, etc.
       return {
         ...state,
-        items: deleteAllItems,
+        items: state.items.filter((item) => {
+          if (item.id !== action.id) {
+            return true;
+          } else {
+            return false;
+          }
+        }),
       };
-      break;
     case "CHANGE_FILTER": // action = { type, newFilter }, newFilter = 'all', 'active', 'completed'
-      let newFilter = action.newFilter; //string
       return {
         ...state,
-        selectedFilter: newFilter,
+        selectedFilter: action.newFilter,
       };
-      break;
     case "CLEAR_COMPLETED": // action = { type }
-      let clearAllItems = state.items;//copy items into allItems
-      let uncheckedItems = clearAllItems.filter((item) => {
-        if (item.check === false) return true;
-        else return false;
-      });
       return {
         ...state,
-        items: uncheckedItems,
+        items: state.items.filter((item) => {
+          if (item.check === false) return true;
+          else return false;
+        }),
       };
-      break;
     default:
       return state;
   }

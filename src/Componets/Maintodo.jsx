@@ -1,109 +1,108 @@
 import React from "react";
-//import Footer from "./Footer";
+import Footer from "./Footer";
 import { connect } from "react-redux";
 
 // import connect from react-redux lib
 // define two function mapStateToProps and mapDispatchToProps
 // make changes to export default
 
-const isUncheckedItem = (item) => {
-  //{text:"dcd",check:true}
-  if (item.check === false) return true;
-  else return false;
-};
+class Maintodos extends React.Component {
 
-const isCheckedItem = (item) => {
-  if (item.check === true) return true;
-  else return false;
-};
+  isUncheckedItem = (item) => {
+    if (item.check === false) return true;
+    else return false;
+  };
 
-const Maintodos = (props) => {
-  return (
-    <div>
-      <h1 className="todos">todos</h1>
+  isCheckedItem = (item) => {
+    if (item.check === true) return true;
+    else return false;
+  };
 
-      <input
-        className="new_todo"
-        type="text"
-        placeholder="What needs to be done?"
-        onKeyPress={(event) => {
-          props.onInputKeyPressed(event);
-        }}
-      />
-      <ul>
-        {props.items
-          .filter((item) => {
-            if (props.filterSelected === "all") {
+  render() {
+    return (
+      <div>
+        <h1 className="todos">todos</h1>
+
+        <input
+          className="new_todo"
+          type="text"
+          placeholder="What needs to be done?"
+          onKeyPress={(event) => {
+            this.props.onInputKeyPressed(event)
+          }}
+        />
+        <ul>
+          {this.props.items.filter((item) => {
+            if (this.props.filterSelected === "all") {
               return true; // show all items
-            } else if (props.filterSelected === "active") {
-              return item.check == false;
+            } else if (this.props.filterSelected === "active") {
+              return item.check === false; // show unchecked items only
             } else {
-              return item.check == true;
+              return item.check === true; // show checked items only
             }
-          })
-          .map((item) => {
+          }).map((item) => {
             return (
-              <li>
+              <li key={item.id}>
                 <input
                   type="checkbox"
                   checked={item.check}
                   onChange={() => {
-                    props.onCheckboxChanged(item);
+                    this.props.onCheckboxChanged(item)
                   }}
-                ></input>
+                />
 
                 <span>{item.text}</span>
 
                 <button
                   className="deletebtn"
-                  className="button"
                   onClick={() => {
-                    props.onDeleteItemClicked(item);
+                    this.props.onDeleteItemClicked(item)
                   }}
                 >
                   X
-                </button>
+              </button>
               </li>
             );
           })}
-      </ul>
-      {/* {props.items.length > 0 && (
-        <Footer
-          activeItems={props.items.filter(isUncheckedItem)}
-          completedItems={props.items.filter(isCheckedItem)}
-        />
-      )} */}
-    </div>
-  );
+        </ul>
+        {this.props.items.length > 0 && (
+          <Footer
+            activeItems={this.props.items.filter(this.isUncheckedItem)}
+            completedItems={this.props.items.filter(this.isCheckedItem)}
+          />
+        )}
+      </div>
+    );
+  }
 };
 
-const mapStateToProps = (state) => {
-  console.log(state);
+const mapStateToProps = state => {
   return {
     items: state.items,
     filterSelected: state.selectedFilter,
   };
-};
+}
 
-const mapDispatchToProps = (dispatch) => ({
-  onInputKeyPressed: (e) => {
-    if (e.key == "Enter") {
-      console.log(e.target.value);
-      dispatch({
-        type: "ADD_ITEM",
-        newItem: { text: e.target.value, check: false },
-      });
-      e.target.value = "";
-    }
-  },
+const mapDispatchToProps = dispatch => {
+  return {
+    onInputKeyPressed: (e) => {
+      if (e.key === "Enter") {
+        dispatch({
+          type: "ADD_ITEM",
+          newText: e.target.value,
+        });
+        e.target.value = "";
+      }
+    },
 
-  onCheckboxChanged: (item) => {
-    dispatch({ type: "CHECK_UNCHECK_ITEM", item: item });
-  },
+    onCheckboxChanged: (item) => {
+      dispatch({ type: "CHECK_UNCHECK_ITEM", id: item.id });
+    },
 
-  onDeleteItemClicked: (item) => {
-    dispatch({ type: "DELETE_ITEM", item: item });
-  },
-});
+    onDeleteItemClicked: (item) => {
+      dispatch({ type: "DELETE_ITEM", id: item.id });
+    },
+  };
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(Maintodos);
