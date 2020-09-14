@@ -20,6 +20,9 @@ import { Provider } from "react-redux";
 // const myReducer = (state, action) => {
 //   return state;
 // };
+
+let nextTodoId = 0
+
 const myReducer = (
   state = {
     items: [], // array of object, object --> { text, check }
@@ -34,7 +37,7 @@ const myReducer = (
         items: [
           ...state.items,
           {
-            id: state.items.length,
+            id: nextTodoId++,
             text: action.newText,
             check: false
           }

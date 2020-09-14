@@ -25,7 +25,7 @@ class Footer extends React.Component {
               value="all"
               checked={this.props.selectedFilter === "all"}
             ></input>
-            <label for="filter1">All</label>
+            <label htmlFor="filter1">All</label>
             <input
               className="footerradio"
               onChange={(e) => {
@@ -37,7 +37,7 @@ class Footer extends React.Component {
               value="active"
               checked={this.props.selectedFilter === "active"}
             ></input>
-            <label for="filter2">Active</label>
+            <label htmlFor="filter2">Active</label>
             <input
               className="footerradio"
               onChange={(e) => {
@@ -49,7 +49,7 @@ class Footer extends React.Component {
               value="completed"
               checked={this.props.selectedFilter === "completed"}
             ></input>
-            <label for="filter3">Completed</label>
+            <label htmlFor="filter3">Completed</label>
           </div>
           <div className="col-4">
             {this.props.completedItems.length > 0 && (
