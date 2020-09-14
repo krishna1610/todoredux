@@ -7,7 +7,6 @@ import { connect } from "react-redux";
 // make changes to export default
 
 class Maintodos extends React.Component {
-
   isUncheckedItem = (item) => {
     if (item.check === false) return true;
     else return false;
@@ -28,42 +27,52 @@ class Maintodos extends React.Component {
           type="text"
           placeholder="What needs to be done?"
           onKeyPress={(event) => {
-            this.props.onInputKeyPressed(event)
+            this.props.onInputKeyPressed(event);
           }}
         />
-        <ul>
-          {this.props.items.filter((item) => {
-            if (this.props.filterSelected === "all") {
-              return true; // show all items
-            } else if (this.props.filterSelected === "active") {
-              return item.check === false; // show unchecked items only
-            } else {
-              return item.check === true; // show checked items only
-            }
-          }).map((item) => {
-            return (
-              <li key={item.id}>
-                <input
-                  type="checkbox"
-                  checked={item.check}
-                  onChange={() => {
-                    this.props.onCheckboxChanged(item)
-                  }}
-                />
+        <ul className="thelist">
+          {this.props.items
+            .filter((item) => {
+              if (this.props.filterSelected === "all") {
+                return true; // show all items
+              } else if (this.props.filterSelected === "active") {
+                return item.check === false; // show unchecked items only
+              } else {
+                return item.check === true; // show checked items only
+              }
+            })
+            .map((item) => {
+              return (
+                <li key={item.id}>
+                  <div className="row lirow">
+                    <div className="col-1">
+                      <input
+                        className="checkbox-round"
+                        type="checkbox"
+                        checked={item.check}
+                        onChange={() => {
+                          this.props.onCheckboxChanged(item);
+                        }}
+                      />
+                    </div>
 
-                <span>{item.text}</span>
-
-                <button
-                  className="deletebtn"
-                  onClick={() => {
-                    this.props.onDeleteItemClicked(item)
-                  }}
-                >
-                  X
-              </button>
-              </li>
-            );
-          })}
+                    <div className="col-10">
+                      <span>{item.text}</span>
+                    </div>
+                    <div className="col-1">
+                      <button
+                        className="button"
+                        onClick={() => {
+                          this.props.onDeleteItemClicked(item);
+                        }}
+                      >
+                        X
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              );
+            })}
         </ul>
         {this.props.items.length > 0 && (
           <Footer
@@ -74,16 +83,16 @@ class Maintodos extends React.Component {
       </div>
     );
   }
-};
+}
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     items: state.items,
     filterSelected: state.selectedFilter,
   };
-}
+};
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
     onInputKeyPressed: (e) => {
       if (e.key === "Enter") {
@@ -103,6 +112,6 @@ const mapDispatchToProps = dispatch => {
       dispatch({ type: "DELETE_ITEM", id: item.id });
     },
   };
-}
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Maintodos);
